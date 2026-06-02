@@ -5,16 +5,34 @@ function App() {
   const [messages, setMessages] = useState([]);
 
   const handleSend = () => {
-    if (message.trim() === "") return;
+  if (message.trim() === "") return;
+
+  let response = "";
+
+  if (message.toLowerCase().includes("java")) {
+    response = "Java is an object-oriented programming language.";
+  } else if (message.toLowerCase().includes("python")) {
+    response = "Python is a beginner-friendly and versatile language.";
+  } else if (message.toLowerCase().includes("c")) {
+    response = "C is a procedural programming language known for its speed.";
+  } else {
+    response = "I'm not sure about that yet. Try asking about Java, C, or Python.";
+  }
 
     setMessages([
       ...messages,
-      `You: ${message}`,
-      `Nova: I'm still learning. Soon I'll answer coding questions!`,
+      {
+        sender: "user",
+        text: message,
+      },
+      {
+        sender: "nova",
+        text: response,
+      },
     ]);
 
-    setMessage("");
-  };
+  setMessage("");
+};
 
   return (
     <div
@@ -42,24 +60,46 @@ function App() {
           <p>👋 Hi! Ask me anything about Java, C, or Python.</p>
         )}
 
-        {messages.map((msg, index) => (
-          <div key={index} style={{ marginBottom: "10px" }}>
-            {msg}
-          </div>
-        ))}
+        {messages.map((msg, index) => {
+  const isUser = msg.sender ==="user";
+
+  return (
+    <div
+      key={index}
+      style={{
+        display: "flex",
+        justifyContent: isUser ? "flex-end" : "flex-start",
+        marginBottom: "10px",
+      }}
+    >
+      <div
+        style={{
+          backgroundColor: isUser ? "#007bff" : "#e5e5e5",
+          color: isUser ? "white" : "black",
+          padding: "10px",
+          borderRadius: "10px",
+          maxWidth: "70%",
+        }}
+      >
+        {msg.text}
+      </div>
+    </div>
+  );
+})}
       </div>
 
       <div style={{ display: "flex", gap: "10px" }}>
-        <input
-          type="text"
-          placeholder="Ask Nova a coding question..."
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          style={{
-            flex: 1,
-            padding: "10px",
-          }}
-        />
+          <input
+      type="text"
+      placeholder="Ask Nova a coding question..."
+      value={message}
+      onChange={(e) => setMessage(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          handleSend();
+        }
+      }}
+    />
 
         <button onClick={handleSend}>
           Send
