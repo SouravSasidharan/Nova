@@ -1,3 +1,4 @@
+import { responses } from "./data/responses";
 import { useState, useRef, useEffect } from "react";
 
 function App() {
@@ -18,36 +19,20 @@ function App() {
 
   const userMessage = message.toLowerCase();
 
-if (userMessage.includes("java")) {
-  response = "Java is an object-oriented programming language used for building applications.";
-}
-else if (userMessage.includes("python")) {
-  response = "Python is known for its simple syntax and versatility.";
-}
-else if (userMessage.includes("c")) {
-  response = "C is a fast procedural programming language widely used in systems programming.";
-}
-else if (userMessage.includes("recursion")) {
-  response = "Recursion is a technique where a function calls itself to solve smaller instances of a problem.";
-}
-else if (userMessage.includes("array")) {
-  response = "An array stores multiple values of the same type in contiguous memory locations.";
-}
-else if (userMessage.includes("linked list")) {
-  response = "A linked list is a linear data structure where each node points to the next node.";
-}
-else if (userMessage.includes("stack")) {
-  response = "A stack follows the LIFO principle: Last In, First Out.";
-}
-else if (userMessage.includes("queue")) {
-  response = "A queue follows the FIFO principle: First In, First Out.";
-}
-else if (userMessage.includes("oop")) {
-  response = "OOP stands for Object-Oriented Programming and is based on classes and objects.";
-}
-else {
-  response = "I don't know that topic yet. Try asking about Java, Python, C, Arrays, Linked Lists, Stacks, Queues, Recursion, or OOP.";
-}
+  let found = false;
+
+  for (const keyword in responses) {
+    if (userMessage.includes(keyword)) {
+      response = responses[keyword];
+      found = true;
+      break;
+    }
+  }
+
+  if (!found) {
+    response =
+      "I don't know that topic yet. Try asking about Java, Python, C, Arrays, Linked Lists, Stacks, Queues, Recursion, or OOP.";
+  }
 
     setMessages([
       ...messages,
