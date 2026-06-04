@@ -1,6 +1,7 @@
 import { responses } from "./data/responses";
-import MessageBubble from "./components/MessageBubble";
 import ChatInput from "./components/ChatInput";
+import ChatWindow from "./components/ChatWindow";
+import { askGemini } from "./services/gemini";
 import { useState, useRef, useEffect } from "react";
 
 function App() {
@@ -14,27 +15,18 @@ function App() {
   });
   }, [messages]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
   if (message.trim() === "") return;
 
   let response = "";
 
-  const userMessage = message.toLowerCase();
-
-  let found = false;
-
-  for (const keyword in responses) {
-    if (userMessage.includes(keyword)) {
-      response = responses[keyword];
-      found = true;
-      break;
+    try {
+      response = await askGemini(message);
+    } catch (error) {
+      console.error(error);
+      response =
+        "Sorry, Nova couldn't reach the AI service right now.";
     }
-  }
-
-  if (!found) {
-    response =
-      "I don't know that topic yet. Try asking about Java, Python, C, Arrays, Linked Lists, Stacks, Queues, Recursion, or OOP.";
-  }
 
     setMessages([
       ...messages,
@@ -74,27 +66,10 @@ function App() {
         <p>AI Coding Companion for Java, C, and Python</p>
       </div>
 
-      <div
-        style={{
-          border: "1px solid #333",
-          borderRadius: "10px",
-          flex: 1,
-          padding: "15px",
-          overflowY: "auto",
-          marginBottom: "15px",
-          backgroundColor: "#1e1e1e",
-}}
-      >
-        {messages.length === 0 && (
-          <p>👋 Hi! Ask me anything about Java, C, or Python.</p>
-        )}
-
-        {messages.map((msg, index) => (
-          <MessageBubble key={index} msg={msg} />
-        ))}
-
-      <div ref={chatEndRef}></div>
-      </div>
+      <ChatWindow
+        messages={messages}
+        chatEndRef={chatEndRef}
+      />
 
       <ChatInput
         message={message}
