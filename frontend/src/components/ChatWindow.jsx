@@ -1,6 +1,6 @@
 import MessageBubble from "./MessageBubble";
 
-function ChatWindow({ messages, chatEndRef }) {
+function ChatWindow({ messages, chatEndRef, loading, }) {
   return (
     <div
       style={{
@@ -20,6 +20,18 @@ function ChatWindow({ messages, chatEndRef }) {
       {messages.map((msg, index) => (
         <MessageBubble key={index} msg={msg} />
       ))}
+
+      {loading && (
+        <div
+          style={{
+            marginBottom: "10px",
+            color: "#9ca3af",
+            fontStyle: "italic",
+          }}
+          >
+            Nova is thinking...
+          </div>
+      )}
 
       <div ref={chatEndRef}></div>
     </div>

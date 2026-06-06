@@ -7,6 +7,7 @@ import { useState, useRef, useEffect } from "react";
 function App() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
   const chatEndRef = useRef(null);
 
   useEffect(() => {
@@ -20,25 +21,35 @@ function App() {
 
   let response = "";
 
-    try {
-      response = await askGemini(message);
-    } catch (error) {
-      console.error(error);
+  setLoading(true);
+
+  try {
+    response = await askGemini(message);
+  } catch (error) {
+    console.error(error);
+
+    if (error.message?.includes("429")) {
+      response =
+        "Nova is temporarily rate-limited. Please wait about a minute and try again.";
+    } else {
       response =
         "Sorry, Nova couldn't reach the AI service right now.";
     }
+  } finally {
+    setLoading(false);
+  }
 
-    setMessages([
-      ...messages,
-      {
-        sender: "user",
-        text: message,
-      },
-      {
-        sender: "nova",
-        text: response,
-      },
-    ]);
+  setMessages([
+    ...messages,
+    {
+      sender: "user",
+      text: message,
+    },
+    {
+      sender: "nova",
+      text: response,
+    },
+  ]);
 
   setMessage("");
 };
@@ -69,6 +80,7 @@ function App() {
       <ChatWindow
         messages={messages}
         chatEndRef={chatEndRef}
+        loading={loading}
       />
 
       <ChatInput

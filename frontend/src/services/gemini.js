@@ -7,7 +7,24 @@ const ai = new GoogleGenAI({
 export async function askGemini(prompt) {
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
-    contents: prompt,
+    contents: `
+You are Nova, an AI coding assistant.
+
+Your specialties are:
+- Java
+- Python
+- C
+
+Rules:
+- Be beginner friendly.
+- Explain concepts clearly.
+- Give examples whenever possible.
+- If code is requested, provide properly formatted code.
+- Keep answers concise unless the user asks for more detail.
+
+User Question:
+${prompt}
+`,
   });
 
   return response.text;
