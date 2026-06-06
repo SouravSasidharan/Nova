@@ -6,7 +6,13 @@ import { useState, useRef, useEffect } from "react";
 
 function App() {
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(() => {
+  const savedMessages = localStorage.getItem("novaMessages");
+
+  return savedMessages
+    ? JSON.parse(savedMessages)
+    : [];
+  });
   const [loading, setLoading] = useState(false);
   const chatEndRef = useRef(null);
 
@@ -14,6 +20,13 @@ function App() {
   chatEndRef.current?.scrollIntoView({
     behavior: "smooth",
   });
+  }, [messages]);
+
+  useEffect(() => {
+  localStorage.setItem(
+    "novaMessages",
+    JSON.stringify(messages)
+    );
   }, [messages]);
 
   const handleSend = async () => {
@@ -54,6 +67,11 @@ function App() {
   setMessage("");
 };
 
+    const clearChat = () => {
+      setMessages([]);
+      localStorage.removeItem("novaMessages");
+  };
+
   return (
     <div
       style={{
@@ -67,15 +85,34 @@ function App() {
     }}
     >
       <div
-        style={{
-          borderBottom: "1px solid #333",
-          paddingBottom: "10px",
-          marginBottom: "15px",
-        }}
-      >
-        <h1>Nova</h1>
-        <p>AI Coding Companion for Java, C, and Python</p>
-      </div>
+  style={{
+    borderBottom: "1px solid #333",
+    paddingBottom: "10px",
+    marginBottom: "15px",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  }}
+>
+  <div>
+    <h1>Nova</h1>
+    <p>AI Coding Companion for Java, C, and Python</p>
+  </div>
+
+  <button
+    onClick={clearChat}
+    style={{
+      padding: "10px 15px",
+      border: "none",
+      borderRadius: "8px",
+      backgroundColor: "#dc2626",
+      color: "white",
+      cursor: "pointer",
+    }}
+  >
+    Clear Chat
+    </button>
+  </div>
 
       <ChatWindow
         messages={messages}
